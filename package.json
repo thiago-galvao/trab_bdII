@@ -1,0 +1,15 @@
+{
+  "name": "trab_bdii",
+  "version": "1.0.0",
+  "description": "Programa teste para acesso ao Microsoft SQL Server",
+  "license": "ISC",
+  "author": "Thiago Galvao",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mssql": "^12.3.1"
+  }
+}
