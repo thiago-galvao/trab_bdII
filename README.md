@@ -1,0 +1,56 @@
+# 🚀 Gerenciamento de Banco de Dados com Docker
+
+Este projeto fornece um ambiente pré-configurado utilizando **Docker Compose** para rodar um servidor **Microsoft SQL Server** junto com o **Adminer** para gerenciamento via interface web.
+
+## 🛠️ Pré-requisitos
+
+Antes de começar, você precisará ter instalado em sua máquina:
+
+* [Docker](https://www.docker.com/get-started) 🐳
+* (Opcional) Editor de código de sua preferência (Ex: VS Code, Vim, Nano).
+
+---
+
+## 🏃 Como Rodar o Programa
+
+1. Abra o terminal na raiz do projeto onde se encontra o arquivo `docker-compose.yml`.
+2. Execute o comando abaixo para iniciar os serviços em segundo plano:
+
+```bash
+docker-compose up -d
+````
+
+3.  Aguarde alguns segundos até que o SQL Server complete a inicialização interna.
+
+-----
+
+## 🗄️ Como Acessar o Banco de Dados
+
+Para gerenciar suas tabelas e dados, utilize a interface do **Adminer**:
+
+1.  Digite na barra de endereços do seu navegador: [http://localhost:8080/](https://www.google.com/search?q=http://localhost:8080/)
+2.  Preencha as credenciais de acesso conforme a imagem abaixo:
+
+<p align="center"\>
+<img src="https://github.com/user-attachments/assets/64bc10f8-4bf6-46ac-8d91-93c15be4ca18" alt="Configuração de Login Adminer" width="600"\>
+</p\>
+
+### 🔑 Detalhes da Conexão:
+
+| Campo | Valor |
+| :--- | :--- |
+| **Sistema** | `MS SQL` |
+| **Servidor** | `sqlserver` |
+| **Usuário** | `sa` |
+| **Senha** | `SenhaForte123!` |
+| **Banco de dados** | *(Pode deixar em branco inicialmente)* |
+
+-----
+
+## 🛑 Como Parar os Serviços
+
+Caso precise encerrar a execução dos containers, utilize:
+
+```bash
+docker-compose down
+```
