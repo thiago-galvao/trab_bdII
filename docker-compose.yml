@@ -1,4 +1,20 @@
 services:
+  # --- Configuração do MySQL ---
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=SenhaForte123!
+      - MYSQL_DATABASE=meu_banco
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Mapeamos APENAS o arquivo do MySQL para a pasta de inicialização automática
+      - ./init-scripts/setupmysql.sql:/docker-entrypoint-initdb.d/setup.sql
+      
+  # --- Configuração do SQL Server ---
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql_server
@@ -10,14 +26,16 @@ services:
       - MSSQL_PID=Developer
     volumes:
       - mssql_data:/var/opt/mssql
-      - ./init-scripts:/docker-entrypoint-initdb.d
+      # Mapeamos APENAS o arquivo do SQL Server em qualquer pasta interna
+      - ./init-scripts/setup.sql:/tmp/setup.sql
     command: >
       bash -c "
       /opt/mssql/bin/sqlservr & 
       sleep 30 && 
-      /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SenhaForte123!' -d master -i /docker-entrypoint-initdb.d/setup.sql -C;
+      /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'SenhaForte123!' -d master -i /tmp/setup.sql -C;
       wait"
 
+  # --- Adminer ---
   adminer:
     image: adminer:latest
     container_name: adminer_web
@@ -26,7 +44,8 @@ services:
       - "8080:8080"
     depends_on:
       - sqlserver
+      - mysql_db
+
 volumes:
   mssql_data:
-
-  
+  mysql_data:

@@ -1,9 +1,10 @@
 -- Criar o banco de dados
 CREATE DATABASE SistemaVendas;
+GO
 
 -- Usar o banco de dados
 USE SistemaVendas;
-
+GO
 
 -- Tabela 1: Categorias
 CREATE TABLE Categorias (
@@ -11,7 +12,8 @@ CREATE TABLE Categorias (
     nome          VARCHAR(100)  NOT NULL,
     descricao     VARCHAR(255)  NULL
 );
- 
+GO
+
 -- Tabela 2: Fornecedores
 CREATE TABLE Fornecedores (
     id_fornecedor INT           IDENTITY(1,1) PRIMARY KEY,
@@ -21,7 +23,8 @@ CREATE TABLE Fornecedores (
     cidade        VARCHAR(100)  NULL,
     estado        CHAR(2)       NULL
 );
- 
+GO
+
 -- Tabela 3: Produtos
 CREATE TABLE Produtos (
     id_produto     INT             IDENTITY(1,1) PRIMARY KEY,
@@ -33,7 +36,8 @@ CREATE TABLE Produtos (
     CONSTRAINT FK_Produto_Categoria  FOREIGN KEY (id_categoria)  REFERENCES Categorias(id_categoria),
     CONSTRAINT FK_Produto_Fornecedor FOREIGN KEY (id_fornecedor) REFERENCES Fornecedores(id_fornecedor)
 );
- 
+GO
+
 -- Tabela 4: Clientes
 CREATE TABLE Clientes (
     id_cliente  INT           IDENTITY(1,1) PRIMARY KEY,
@@ -44,7 +48,8 @@ CREATE TABLE Clientes (
     cidade      VARCHAR(100)  NULL,
     estado      CHAR(2)       NULL
 );
- 
+GO
+
 -- Tabela 5: Pedidos
 CREATE TABLE Pedidos (
     id_pedido    INT           IDENTITY(1,1) PRIMARY KEY,
@@ -55,7 +60,8 @@ CREATE TABLE Pedidos (
     total        DECIMAL(10,2) NOT NULL DEFAULT 0,
     CONSTRAINT FK_Pedido_Cliente FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
 );
- 
+GO
+
 -- Tabela 6: ItensPedido
 CREATE TABLE ItensPedido (
     SET ANSI_NULLS ON;
@@ -70,6 +76,7 @@ CREATE TABLE ItensPedido (
     CONSTRAINT FK_Item_Pedido   FOREIGN KEY (id_pedido)  REFERENCES Pedidos(id_pedido),
     CONSTRAINT FK_Item_Produto  FOREIGN KEY (id_produto) REFERENCES Produtos(id_produto)
 );
+GO
 
 -- ============================================================
 -- DADOS ABAIXO
@@ -89,7 +96,7 @@ INSERT INTO Categorias (nome, descricao) VALUES
 ('Beleza',           'Cosméticos, perfumes e cuidados pessoais'),
 ('Ferramentas',      'Ferramentas elétricas e manuais'),
 ('Alimentos',        'Produtos alimentícios e bebidas');
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  Fornecedores (10 registros)
@@ -105,7 +112,7 @@ INSERT INTO Fornecedores (razao_social, cnpj, telefone, cidade, estado) VALUES
 ('BeautyCo Importacoes',    '88.999.000/0001-11', '(71) 3700-8000', 'Salvador',       'BA'),
 ('FerraTool Industria',     '99.000.111/0001-22', '(91) 3800-9000', 'Belem',          'PA'),
 ('AlimFresh Distribuidora', '10.111.222/0001-33', '(48) 3900-0000', 'Florianopolis',  'SC');
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  Produtos (12 registros)
@@ -123,7 +130,7 @@ INSERT INTO Produtos (nome, preco_unitario, estoque, id_categoria, id_fornecedor
 ('Whey Protein 2kg',             189.90,  90, 10, 10),
 ('Mouse Gamer Rapoo VT7 Max',    349.90,  70, 3,  1),
 ('Teclado Mecanico Redragon',    299.90,  55, 2,  2);
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  Clientes (12 registros)
@@ -141,7 +148,7 @@ INSERT INTO Clientes (nome, cpf, email, telefone, cidade, estado) VALUES
 ('Lucas Pereira',       '010.111.222-33', 'lucas.p@email.com',     '(71) 99010-0000', 'Salvador',       'BA'),
 ('Mariana Santos',      '020.222.333-44', 'mari.santos@email.com', '(41) 99011-1111', 'Curitiba',       'PR'),
 ('Nicolas Gomes',       '030.333.444-55', 'nico.g@email.com',      '(41) 99012-2222', 'Curitiba',       'PR');
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  Pedidos (12 registros) — total = 0
@@ -159,7 +166,7 @@ INSERT INTO Pedidos (id_cliente, data_pedido, status, total) VALUES
 (10, '2025-03-20 09:30:00', 'Pendente',  0),
 (11, '2025-04-01 11:00:00', 'Aprovado',  0),
 (12, '2025-04-05 14:30:00', 'Pendente',  0);
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  ItensPedido (15 registros)
@@ -180,16 +187,16 @@ INSERT INTO ItensPedido (id_pedido, id_produto, quantidade, preco_unitario) VALU
 (11, 11, 1,  349.90),   -- Pedido 11: Mouse 
 (12, 2,  1, 3299.00),   -- Pedido 12: Notebook
 (12, 12, 1,  299.90);   -- Pedido 12: Teclado
-
+GO
 
 -- ────────────────────────────────────────────────────────────
 --  Comando para verificar quantidade de registros em cada tabela
 -- ────────────────────────────────────────────────────────────
-SELECT 'Categorias'  AS Tabela, COUNT(*) AS Registros FROM Categorias UNION ALL
-SELECT 'Fornecedores',          COUNT(*) FROM Fornecedores             UNION ALL
-SELECT 'Produtos',              COUNT(*) FROM Produtos                 UNION ALL
-SELECT 'Clientes',              COUNT(*) FROM Clientes                 UNION ALL
-SELECT 'Pedidos',               COUNT(*) FROM Pedidos                  UNION ALL
+SELECT 'Categorias'  AS Tabela, COUNT(*) AS Registros FROM Categorias UNION ALL GO
+SELECT 'Fornecedores',          COUNT(*) FROM Fornecedores             UNION ALL GO
+SELECT 'Produtos',              COUNT(*) FROM Produtos                 UNION ALL GO
+SELECT 'Clientes',              COUNT(*) FROM Clientes                 UNION ALL GO
+SELECT 'Pedidos',               COUNT(*) FROM Pedidos                  UNION ALL GO
 SELECT 'ItensPedido',           COUNT(*) FROM ItensPedido;
 
 -- ────────────────────────────────────────────────────────────
@@ -210,10 +217,10 @@ FROM Pedidos p
 JOIN Clientes    c  ON c.id_cliente  = p.id_cliente
 JOIN ItensPedido i  ON i.id_pedido   = p.id_pedido
 JOIN Produtos    pr ON pr.id_produto = i.id_produto;
-
+GO
 -- Consulta para teste --
-    SELECT * FROM vw_PedidosDetalhados;
-    SELECT * FROM vw_PedidosDetalhados WHERE status = 'Entregue'; -- o campo ' ' poderá ser 'Pendente', 'Aprovado', 'Cancelado'
+    SELECT * FROM vw_PedidosDetalhados; GO
+    SELECT * FROM vw_PedidosDetalhados WHERE status = 'Entregue'; GO -- o campo ' ' poderá ser 'Pendente', 'Aprovado', 'Cancelado'
 --
 
 
@@ -231,11 +238,11 @@ BEGIN
     AND status != 'Cancelado'
     RETURN ISNULL(@total, 0)
 END
-
+GO
 
 -- Consulta para teste
-    SELECT dbo.fn_TotalGastoPorCliente(1) AS TotalGasto -- mostra o totalgasto por id
-    SELECT nome, dbo.fn_TotalGastoPorCliente(2) AS TotalGasto FROM Clientes -- Exibe clientes totalgasto
+    SELECT dbo.fn_TotalGastoPorCliente(1) AS TotalGasto GO -- mostra o totalgasto por id
+    SELECT nome, dbo.fn_TotalGastoPorCliente(2) AS TotalGasto FROM Clientes GO -- Exibe clientes totalgasto
 
 
 
@@ -268,9 +275,10 @@ BEGIN
     ORDER BY p.data_pedido DESC
 END
  
+GO
 -- Consulta para teste:
     EXEC sp_PedidosPorCliente 6
-
+GO
 -- ============================================================
 --  4. TRIGGER – Recalcula Pedidos.total automaticamente
 -- ============================================================ 
@@ -298,7 +306,7 @@ END
     SELECT ISNULL(SUM(quantidade * preco_unitario), 0)
     FROM ItensPedido WHERE ItensPedido.id_pedido = Pedidos.id_pedido
  )
-
+GO
 
 -- ============================================================
 --  5. TRANSACTION – Insere pedido + itens (Se ocorrer tudo certo ele salva, caso contrario apresenta erro)
@@ -322,7 +330,7 @@ BEGIN CATCH
     PRINT 'Erro: ' + ERROR_MESSAGE()
 END CATCH
 
-
+GO
 -- ============================================================
 --  6. TABELA TEMPORÁRIA – Cria tabela temporária para visualização durante a execução
 -- ============================================================
@@ -332,7 +340,7 @@ CREATE TABLE #ResumoVendas (
     valor_total  DECIMAL(10,2),
     ticket_medio DECIMAL(10,2)
 )
- 
+GO
 INSERT INTO #ResumoVendas
 SELECT
     c.nome,
@@ -343,10 +351,10 @@ FROM Clientes c
 JOIN Pedidos p ON p.id_cliente = c.id_cliente
 WHERE p.status != 'Cancelado'
 GROUP BY c.nome
+GO
+SELECT * FROM #ResumoVendas ORDER BY valor_total DESC GO
  
-SELECT * FROM #ResumoVendas ORDER BY valor_total DESC
- 
-DROP TABLE #ResumoVendas
+DROP TABLE #ResumoVendas GO
 
 
 -- ============================================================
