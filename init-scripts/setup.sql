@@ -64,9 +64,6 @@ GO
 
 -- Tabela 6: ItensPedido
 CREATE TABLE ItensPedido (
-    SET ANSI_NULLS ON;
-    SET QUOTED_IDENTIFIER ON; --Define (" ") para nomes de tabelas/colunas, e (' ') para Strings
-
     id_item        INT            IDENTITY(1,1) PRIMARY KEY,
     id_pedido      INT            NOT NULL,
     id_produto     INT            NOT NULL,
