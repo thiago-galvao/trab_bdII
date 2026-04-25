@@ -2,39 +2,29 @@
 -- 1. ESTRUTURA DO BANCO
 -- ============================================================
 
--- Criar o banco de dados
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'SistemaVendas')
-BEGIN
-    CREATE DATABASE SistemaVendas;
-END
-GO
-
--- Usar o banco de dados
-USE SistemaVendas;
-GO
+CREATE DATABASE IF NOT EXISTS meu_banco;
+USE meu_banco;
 
 -- Tabela 1: Categorias
 CREATE TABLE Categorias (
-    id_categoria  INT           IDENTITY(1,1) PRIMARY KEY,
+    id_categoria  INT           AUTO_INCREMENT PRIMARY KEY,
     nome          VARCHAR(100)  NOT NULL,
     descricao     VARCHAR(255)  NULL
-);
-GO
+) ENGINE=InnoDB;
 
 -- Tabela 2: Fornecedores
 CREATE TABLE Fornecedores (
-    id_fornecedor INT           IDENTITY(1,1) PRIMARY KEY,
+    id_fornecedor INT           AUTO_INCREMENT PRIMARY KEY,
     razao_social  VARCHAR(150)  NOT NULL,
     cnpj          CHAR(18)      NOT NULL UNIQUE,
     telefone      VARCHAR(20)   NULL,
     cidade        VARCHAR(100)  NULL,
     estado        CHAR(2)       NULL
-);
-GO
+) ENGINE=InnoDB;
 
 -- Tabela 3: Produtos
 CREATE TABLE Produtos (
-    id_produto     INT             IDENTITY(1,1) PRIMARY KEY,
+    id_produto     INT             AUTO_INCREMENT PRIMARY KEY,
     nome           VARCHAR(150)    NOT NULL,
     preco_unitario DECIMAL(10,2)   NOT NULL,
     estoque        INT             NOT NULL DEFAULT 0,
@@ -42,49 +32,41 @@ CREATE TABLE Produtos (
     id_fornecedor  INT             NOT NULL,
     CONSTRAINT FK_Produto_Categoria  FOREIGN KEY (id_categoria)  REFERENCES Categorias(id_categoria),
     CONSTRAINT FK_Produto_Fornecedor FOREIGN KEY (id_fornecedor) REFERENCES Fornecedores(id_fornecedor)
-);
-GO
+) ENGINE=InnoDB;
 
 -- Tabela 4: Clientes
 CREATE TABLE Clientes (
-    id_cliente  INT           IDENTITY(1,1) PRIMARY KEY,
+    id_cliente  INT           AUTO_INCREMENT PRIMARY KEY,
     nome        VARCHAR(150)  NOT NULL,
     cpf         CHAR(14)      NOT NULL UNIQUE,
     email       VARCHAR(150)  NULL,
     telefone    VARCHAR(20)   NULL,
     cidade      VARCHAR(100)  NULL,
     estado      CHAR(2)       NULL
-);
-GO
+) ENGINE=InnoDB;
 
 -- Tabela 5: Pedidos
 CREATE TABLE Pedidos (
-    id_pedido    INT           IDENTITY(1,1) PRIMARY KEY,
+    id_pedido    INT           AUTO_INCREMENT PRIMARY KEY,
     id_cliente   INT           NOT NULL,
-    data_pedido  DATETIME      NOT NULL DEFAULT GETDATE(),
+    data_pedido  DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status       VARCHAR(20)   NOT NULL DEFAULT 'Pendente'
                                CHECK (status IN ('Pendente','Aprovado','Cancelado','Entregue')),
     total        DECIMAL(10,2) NOT NULL DEFAULT 0,
     CONSTRAINT FK_Pedido_Cliente FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
-);
-GO
+) ENGINE=InnoDB;
 
 -- Tabela 6: ItensPedido
-SET ANSI_NULLS ON;
-SET QUOTED_IDENTIFIER ON;
-GO
-
 CREATE TABLE ItensPedido (
-    id_item        INT            IDENTITY(1,1) PRIMARY KEY,
+    id_item        INT            AUTO_INCREMENT PRIMARY KEY,
     id_pedido      INT            NOT NULL,
     id_produto     INT            NOT NULL,
     quantidade     INT            NOT NULL CHECK (quantidade > 0),
     preco_unitario DECIMAL(10,2)  NOT NULL,
-    subtotal       AS (quantidade * preco_unitario),
+    subtotal       DECIMAL(10,2)  GENERATED ALWAYS AS (quantidade * preco_unitario) STORED,
     CONSTRAINT FK_Item_Pedido   FOREIGN KEY (id_pedido)  REFERENCES Pedidos(id_pedido),
     CONSTRAINT FK_Item_Produto  FOREIGN KEY (id_produto) REFERENCES Produtos(id_produto)
-);
-GO
+) ENGINE=InnoDB;
 
 -- ============================================================
 -- 2. CARGA DE DADOS
@@ -101,7 +83,6 @@ INSERT INTO Categorias (nome, descricao) VALUES
 ('Beleza', 'Cosméticos, perfumes e cuidados pessoais'),
 ('Ferramentas', 'Ferramentas elétricas e manuais'),
 ('Alimentos', 'Produtos alimentícios e bebidas');
-GO
 
 INSERT INTO Fornecedores (razao_social, cnpj, telefone, cidade, estado) VALUES
 ('TechDistrib Ltda', '11.222.333/0001-44', '(11) 3000-1000', 'Sao Paulo', 'SP'),
@@ -114,7 +95,6 @@ INSERT INTO Fornecedores (razao_social, cnpj, telefone, cidade, estado) VALUES
 ('BeautyCo Importacoes', '88.999.000/0001-11', '(71) 3700-8000', 'Salvador', 'BA'),
 ('FerraTool Industria', '99.000.111/0001-22', '(91) 3800-9000', 'Belem', 'PA'),
 ('AlimFresh Distribuidora', '10.111.222/0001-33', '(48) 3900-0000', 'Florianopolis', 'SC');
-GO
 
 INSERT INTO Produtos (nome, preco_unitario, estoque, id_categoria, id_fornecedor) VALUES
 ('Smartphone Galaxy A54', 1899.90, 50, 1, 1),
@@ -129,7 +109,6 @@ INSERT INTO Produtos (nome, preco_unitario, estoque, id_categoria, id_fornecedor
 ('Whey Protein 2kg', 189.90, 90, 10, 10),
 ('Mouse Gamer Rapoo VT7 Max', 349.90, 70, 3, 1),
 ('Teclado Mecanico Redragon', 299.90, 55, 2, 2);
-GO
 
 INSERT INTO Clientes (nome, cpf, email, telefone, cidade, estado) VALUES
 ('Ana Paula Ferreira', '111.222.333-44', 'ana.paula@email.com', '(41) 99001-1111', 'Curitiba', 'PR'),
@@ -144,7 +123,6 @@ INSERT INTO Clientes (nome, cpf, email, telefone, cidade, estado) VALUES
 ('Lucas Pereira', '010.111.222-33', 'lucas.p@email.com', '(71) 99010-0000', 'Salvador', 'BA'),
 ('Mariana Santos', '020.222.333-44', 'mari.santos@email.com', '(41) 99011-1111', 'Curitiba', 'PR'),
 ('Nicolas Gomes', '030.333.444-55', 'nico.g@email.com', '(41) 99012-2222', 'Curitiba', 'PR');
-GO
 
 INSERT INTO Pedidos (id_cliente, data_pedido, status, total) VALUES
 (1, '2025-01-05 10:00:00', 'Entregue', 0),
@@ -159,7 +137,6 @@ INSERT INTO Pedidos (id_cliente, data_pedido, status, total) VALUES
 (10, '2025-03-20 09:30:00', 'Pendente', 0),
 (11, '2025-04-01 11:00:00', 'Aprovado', 0),
 (12, '2025-04-05 14:30:00', 'Pendente', 0);
-GO
 
 INSERT INTO ItensPedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES
 (1, 1, 1, 1899.90),
@@ -177,7 +154,6 @@ INSERT INTO ItensPedido (id_pedido, id_produto, quantidade, preco_unitario) VALU
 (11, 11, 1, 349.90),
 (12, 2, 1, 3299.00),
 (12, 12, 1, 299.90);
-GO
 
 -- ============================================================
 -- 3. OBJETOS PROGRAMÁVEIS (VIEWS, FUNCTIONS, PROCEDURES)
@@ -198,116 +174,67 @@ FROM Pedidos p
 JOIN Clientes    c  ON c.id_cliente  = p.id_cliente
 JOIN ItensPedido i  ON i.id_pedido   = p.id_pedido
 JOIN Produtos    pr ON pr.id_produto = i.id_produto;
-GO
 
-CREATE FUNCTION dbo.fn_TotalGastoPorCliente(@id_cliente INT)
+-- Delimitador necessário para criar Procedures, Triggers e Functions no MySQL
+DELIMITER //
+
+CREATE FUNCTION fn_TotalGastoPorCliente(v_id_cliente INT)
 RETURNS DECIMAL(10,2)
-AS
+DETERMINISTIC
 BEGIN
-    DECLARE @total DECIMAL(10,2)
-    SELECT @total = SUM(total)
+    DECLARE v_total DECIMAL(10,2);
+    SELECT SUM(total) INTO v_total
     FROM Pedidos
-    WHERE id_cliente = @id_cliente
-    AND status != 'Cancelado'
-    RETURN ISNULL(@total, 0)
-END
-GO
+    WHERE id_cliente = v_id_cliente
+    AND status != 'Cancelado';
+    RETURN IFNULL(v_total, 0);
+END //
 
-CREATE PROCEDURE sp_PedidosPorCliente
-    @id_cliente INT
-AS
+CREATE PROCEDURE sp_PedidosPorCliente(IN v_id_cliente INT)
 BEGIN
-    SET NOCOUNT ON
-    SELECT nome, email, cidade, estado FROM Clientes WHERE id_cliente = @id_cliente
+    SELECT nome, email, cidade, estado FROM Clientes WHERE id_cliente = v_id_cliente;
+    
     SELECT
         p.id_pedido, p.data_pedido, p.status, pr.nome AS produto,
         i.quantidade, i.preco_unitario, i.subtotal, p.total AS total_pedido
     FROM Pedidos p
     JOIN ItensPedido i  ON i.id_pedido   = p.id_pedido
     JOIN Produtos    pr ON pr.id_produto = i.id_produto
-    WHERE p.id_cliente = @id_cliente
-    ORDER BY p.data_pedido DESC
-END
-GO
+    WHERE p.id_cliente = v_id_cliente
+    ORDER BY p.data_pedido DESC;
+END //
 
-CREATE TRIGGER trg_AtualizaTotalPedido
-ON ItensPedido
-AFTER INSERT, UPDATE, DELETE
-AS
+CREATE TRIGGER trg_AtualizaTotalPedido_Insert
+AFTER INSERT ON ItensPedido
+FOR EACH ROW
 BEGIN
-    SET NOCOUNT ON
     UPDATE Pedidos
-    SET total = (
-        SELECT ISNULL(SUM(quantidade * preco_unitario), 0)
-        FROM ItensPedido
-        WHERE ItensPedido.id_pedido = Pedidos.id_pedido
-    )
-    WHERE id_pedido IN (SELECT id_pedido FROM inserted UNION SELECT id_pedido FROM deleted)
-END
-GO
+    SET total = (SELECT IFNULL(SUM(quantidade * preco_unitario), 0) FROM ItensPedido WHERE id_pedido = NEW.id_pedido)
+    WHERE id_pedido = NEW.id_pedido;
+END //
+
+CREATE TRIGGER trg_AtualizaTotalPedido_Update
+AFTER UPDATE ON ItensPedido
+FOR EACH ROW
+BEGIN
+    UPDATE Pedidos
+    SET total = (SELECT IFNULL(SUM(quantidade * preco_unitario), 0) FROM ItensPedido WHERE id_pedido = NEW.id_pedido)
+    WHERE id_pedido = NEW.id_pedido;
+END //
+
+CREATE TRIGGER trg_AtualizaTotalPedido_Delete
+AFTER DELETE ON ItensPedido
+FOR EACH ROW
+BEGIN
+    UPDATE Pedidos
+    SET total = (SELECT IFNULL(SUM(quantidade * preco_unitario), 0) FROM ItensPedido WHERE id_pedido = OLD.id_pedido)
+    WHERE id_pedido = OLD.id_pedido;
+END //
+
+DELIMITER ;
 
 -- Atualização inicial dos totais
-UPDATE Pedidos SET total = (
-    SELECT ISNULL(SUM(quantidade * preco_unitario), 0)
-    FROM ItensPedido WHERE ItensPedido.id_pedido = Pedidos.id_pedido
-)
-GO
-
--- ============================================================
--- 4. TRANSAÇÕES E TESTES
--- ============================================================
-
-BEGIN TRANSACTION
-BEGIN TRY
-    INSERT INTO Pedidos (id_cliente, data_pedido, status, total)
-    VALUES (2, GETDATE(), 'Pendente', 0)
-    DECLARE @novo_pedido INT = SCOPE_IDENTITY()
-    INSERT INTO ItensPedido (id_pedido, id_produto, quantidade, preco_unitario)
-    VALUES (@novo_pedido, 11, 1, 349.90), (@novo_pedido, 12, 1, 299.90)
-    COMMIT TRANSACTION
-    PRINT 'Pedido ' + CAST(@novo_pedido AS VARCHAR) + ' inserido com sucesso!'
-END TRY
-BEGIN CATCH
-    ROLLBACK TRANSACTION
-    PRINT 'Erro: ' + ERROR_MESSAGE()
-END CATCH
-GO
-
--- Tabela Temporária
-CREATE TABLE #ResumoVendas (
-    cliente VARCHAR(150), qtd_pedidos INT, valor_total DECIMAL(10,2), ticket_medio DECIMAL(10,2)
-)
-GO
-INSERT INTO #ResumoVendas
-SELECT c.nome, COUNT(p.id_pedido), SUM(p.total), AVG(p.total)
-FROM Clientes c JOIN Pedidos p ON p.id_cliente = c.id_cliente
-WHERE p.status != 'Cancelado' GROUP BY c.nome
-GO
-SELECT * FROM #ResumoVendas ORDER BY valor_total DESC;
-DROP TABLE #ResumoVendas;
-GO
-
--- Cursor de Alerta (Sem GO entre declaração e uso)
-DECLARE @nome_produto VARCHAR(150), @estoque INT, @alerta VARCHAR(300)
-DECLARE cur_EstoqueBaixo CURSOR FOR SELECT nome, estoque FROM Produtos WHERE estoque < 30
-OPEN cur_EstoqueBaixo
-FETCH NEXT FROM cur_EstoqueBaixo INTO @nome_produto, @estoque
-WHILE @@FETCH_STATUS = 0
-BEGIN
-    SET @alerta = 'ALERTA: "' + @nome_produto + '" - apenas ' + CAST(@estoque AS VARCHAR) + ' unidade(s).'
-    PRINT @alerta
-    FETCH NEXT FROM cur_EstoqueBaixo INTO @nome_produto, @estoque
-END
-CLOSE cur_EstoqueBaixo
-DEALLOCATE cur_EstoqueBaixo
-GO
-
--- Log com Output
-CREATE TABLE LogPedidos (id_pedido INT, data_pedido DATETIME, status VARCHAR(20))
-GO
-INSERT INTO Pedidos (id_cliente, data_pedido, status, total)
-OUTPUT inserted.id_pedido, inserted.data_pedido, inserted.status INTO LogPedidos
-VALUES (3, GETDATE(), 'Pendente', 0)
-GO
-SELECT * FROM LogPedidos;
-GO
+UPDATE Pedidos p SET total = (
+    SELECT IFNULL(SUM(quantidade * preco_unitario), 0)
+    FROM ItensPedido i WHERE i.id_pedido = p.id_pedido
+);
