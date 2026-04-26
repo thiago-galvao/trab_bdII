@@ -24,9 +24,7 @@ docker-compose up -d
 
 -----
 
-## Como Acessar o Banco de Dados
-
-Para gerenciar suas tabelas e dados, utilize a interface do **Adminer**:
+## Como Acessar o Microsoft SQL Server e o MySQL
 
 1.  Digite na barra de endereços do seu navegador: [http://localhost:8080/](https://www.google.com/search?q=http://localhost:8080/)
 2.  Preencha as credenciais de acesso conforme a imagem abaixo:
@@ -37,13 +35,13 @@ Para gerenciar suas tabelas e dados, utilize a interface do **Adminer**:
 
 ### Detalhes da Conexão:
 
-| Campo | Valor |
-| :--- | :--- |
-| **Sistema** | `MS SQL` |
-| **Servidor** | `sqlserver` |
-| **Usuário** | `sa` |
-| **Senha** | `SenhaForte123!` |
-| **Banco de dados** | *(Pode deixar em branco inicialmente)* |
+| Parâmetro | Microsoft SQL Server | MySQL |
+| :--- | :--- | :--- |
+| **Sistema** | `MS SQL` | `MySQL / MariaDB` |
+| **Servidor** | `sqlserver` | `mysql_server` |
+| **Usuário** | `sa` | `root` |
+| **Senha** | `SenhaForte123!` | `SenhaForte123!` |
+| **Banco de dados** | *(Pode deixar em branco inicialmente)* | `meu_banco` |
 
 -----
 
